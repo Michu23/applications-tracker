@@ -53,7 +53,7 @@ export default function Header() {
                   : 'text-gray-600 hover:bg-gray-100'
               )}
             >
-              Kanban
+              Visualisation
             </Link>
             <Link
               href="/resources"
