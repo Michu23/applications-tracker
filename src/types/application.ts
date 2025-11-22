@@ -12,16 +12,21 @@ export type KanbanStatus =
   | 'Decision Pending'
   | 'Done';
 
+export type Semester = 'Winter' | 'Summer' | '';
+
 export interface Application {
   id: string;
   courseName: string;
   university: string;
-  location?: string;
+  city?: string;
   deadline: string; // ISO date string
   status: ApplicationStatus;
+  semester?: Semester;
   applicationLink?: string;
   appliedDate?: string; // ISO date string
-  tuitionFee?: string;
+  uniAssistRequired?: boolean;
+  languageRequirement?: string;
+  semesterContribution?: string;
   priority: number; // 1-5
   notes?: string;
   createdAt: string; // ISO date string
@@ -31,21 +36,27 @@ export interface Application {
 export interface ApplicationFormData {
   courseName: string;
   university: string;
-  location: string;
+  city: string;
   deadline: string;
   status: ApplicationStatus;
+  semester: Semester;
   applicationLink: string;
   appliedDate: string;
-  tuitionFee: string;
+  uniAssistRequired: boolean;
+  languageRequirement: string;
+  semesterContribution: string;
   priority: number;
   notes: string;
 }
 
 export const DEFAULT_APPLICATION_VALUES: Omit<ApplicationFormData, 'courseName' | 'university' | 'deadline' | 'status'> = {
-  location: '',
+  city: '',
+  semester: '',
   applicationLink: '',
   appliedDate: '',
-  tuitionFee: '',
+  uniAssistRequired: false,
+  languageRequirement: '',
+  semesterContribution: '',
   priority: 3,
   notes: '',
 };
@@ -56,6 +67,12 @@ export const STATUS_OPTIONS: ApplicationStatus[] = [
   'Admitted',
   'Rejected',
   'Waitlist',
+];
+
+export const SEMESTER_OPTIONS: { value: Semester; label: string }[] = [
+  { value: '', label: 'Select Semester' },
+  { value: 'Summer', label: 'Summer 2026' },
+  { value: 'Winter', label: 'Winter 2026/27' },
 ];
 
 export const KANBAN_COLUMNS: { id: KanbanStatus; title: string; statuses: ApplicationStatus[] }[] = [

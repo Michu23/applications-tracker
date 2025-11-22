@@ -30,16 +30,28 @@ export default function ApplicationCard({ application }: ApplicationCardProps) {
           <StarRating value={application.priority} readonly size="sm" />
         </div>
 
-        {/* Location */}
-        {application.location && (
-          <p className="text-sm text-gray-500 flex items-center gap-1.5">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            {application.location}
-          </p>
-        )}
+        {/* City and Semester */}
+        <div className="flex items-center gap-3 flex-wrap">
+          {application.city && (
+            <p className="text-sm text-gray-500 flex items-center gap-1.5">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {application.city}
+            </p>
+          )}
+          {application.semester && (
+            <span className="text-xs px-2 py-0.5 bg-[#2979FF]/10 text-[#2979FF] rounded-full">
+              {application.semester} 2026
+            </span>
+          )}
+          {application.uniAssistRequired && (
+            <span className="text-xs px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full">
+              Uni-Assist
+            </span>
+          )}
+        </div>
 
         {/* Footer: Status and Deadline */}
         <div className="flex items-center justify-between gap-4 pt-2 border-t border-gray-100">

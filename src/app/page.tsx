@@ -63,12 +63,15 @@ export default function Home() {
       const newApp = createApplication({
         courseName: data.courseName,
         university: data.university,
-        location: data.location || undefined,
+        city: data.city || undefined,
         deadline: new Date(data.deadline).toISOString(),
         status: data.status,
+        semester: data.semester || undefined,
         applicationLink: data.applicationLink || undefined,
         appliedDate: data.appliedDate ? new Date(data.appliedDate).toISOString() : undefined,
-        tuitionFee: data.tuitionFee || undefined,
+        uniAssistRequired: data.uniAssistRequired,
+        languageRequirement: data.languageRequirement || undefined,
+        semesterContribution: data.semesterContribution || undefined,
         priority: data.priority,
         notes: data.notes || undefined,
       });

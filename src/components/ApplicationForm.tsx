@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Application, ApplicationFormData, DEFAULT_APPLICATION_VALUES, STATUS_OPTIONS } from '@/types/application';
+import { Application, ApplicationFormData, DEFAULT_APPLICATION_VALUES, STATUS_OPTIONS, SEMESTER_OPTIONS } from '@/types/application';
 import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
@@ -24,12 +24,15 @@ export default function ApplicationForm({
   const [formData, setFormData] = useState<ApplicationFormData>({
     courseName: initialData?.courseName || '',
     university: initialData?.university || '',
-    location: initialData?.location || DEFAULT_APPLICATION_VALUES.location,
+    city: initialData?.city || DEFAULT_APPLICATION_VALUES.city,
     deadline: initialData?.deadline ? initialData.deadline.split('T')[0] : '',
     status: initialData?.status || 'Planning',
+    semester: initialData?.semester || DEFAULT_APPLICATION_VALUES.semester,
     applicationLink: initialData?.applicationLink || DEFAULT_APPLICATION_VALUES.applicationLink,
     appliedDate: initialData?.appliedDate ? initialData.appliedDate.split('T')[0] : DEFAULT_APPLICATION_VALUES.appliedDate,
-    tuitionFee: initialData?.tuitionFee || DEFAULT_APPLICATION_VALUES.tuitionFee,
+    uniAssistRequired: initialData?.uniAssistRequired || DEFAULT_APPLICATION_VALUES.uniAssistRequired,
+    languageRequirement: initialData?.languageRequirement || DEFAULT_APPLICATION_VALUES.languageRequirement,
+    semesterContribution: initialData?.semesterContribution || DEFAULT_APPLICATION_VALUES.semesterContribution,
     priority: initialData?.priority || DEFAULT_APPLICATION_VALUES.priority,
     notes: initialData?.notes || DEFAULT_APPLICATION_VALUES.notes,
   });
@@ -66,8 +69,9 @@ export default function ApplicationForm({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
     if (errors[name as keyof ApplicationFormData]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -82,17 +86,17 @@ export default function ApplicationForm({
       {/* Required Fields */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-          Required Information
+          Program Information
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             id="courseName"
             name="courseName"
-            label="Course Name *"
+            label="Program/Course Name *"
             value={formData.courseName}
             onChange={handleChange}
             error={errors.courseName}
-            placeholder="e.g., Computer Science MSc"
+            placeholder="e.g., M.Sc. Computer Science"
           />
           <Input
             id="university"
@@ -101,7 +105,25 @@ export default function ApplicationForm({
             value={formData.university}
             onChange={handleChange}
             error={errors.university}
-            placeholder="e.g., MIT"
+            placeholder="e.g., TU Munich"
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            id="city"
+            name="city"
+            label="City"
+            value={formData.city}
+            onChange={handleChange}
+            placeholder="e.g., Munich, Berlin"
+          />
+          <Select
+            id="semester"
+            name="semester"
+            label="Intake Semester"
+            value={formData.semester}
+            onChange={handleChange}
+            options={SEMESTER_OPTIONS}
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -109,7 +131,7 @@ export default function ApplicationForm({
             id="deadline"
             name="deadline"
             type="date"
-            label="Deadline *"
+            label="Application Deadline *"
             value={formData.deadline}
             onChange={handleChange}
             error={errors.deadline}
@@ -126,35 +148,17 @@ export default function ApplicationForm({
         </div>
       </div>
 
-      {/* Optional Fields */}
+      {/* German-specific Fields */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-          Additional Details
+          Application Details
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            id="location"
-            name="location"
-            label="Location"
-            value={formData.location}
-            onChange={handleChange}
-            placeholder="e.g., Cambridge, MA"
-          />
-          <Input
-            id="tuitionFee"
-            name="tuitionFee"
-            label="Tuition Fee"
-            value={formData.tuitionFee}
-            onChange={handleChange}
-            placeholder="e.g., $50,000/year"
-          />
-        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             id="applicationLink"
             name="applicationLink"
             type="url"
-            label="Application Link"
+            label="Application Portal Link"
             value={formData.applicationLink}
             onChange={handleChange}
             placeholder="https://..."
@@ -167,6 +171,37 @@ export default function ApplicationForm({
             value={formData.appliedDate}
             onChange={handleChange}
           />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            id="languageRequirement"
+            name="languageRequirement"
+            label="Language Requirement"
+            value={formData.languageRequirement}
+            onChange={handleChange}
+            placeholder="e.g., IELTS 6.5, B2 German"
+          />
+          <Input
+            id="semesterContribution"
+            name="semesterContribution"
+            label="Semester Contribution"
+            value={formData.semesterContribution}
+            onChange={handleChange}
+            placeholder="e.g., 150 EUR"
+          />
+        </div>
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            id="uniAssistRequired"
+            name="uniAssistRequired"
+            checked={formData.uniAssistRequired}
+            onChange={handleChange}
+            className="h-4 w-4 rounded border-gray-300 text-[#2979FF] focus:ring-[#2979FF]"
+          />
+          <label htmlFor="uniAssistRequired" className="text-sm text-gray-700">
+            Uni-Assist required for this application
+          </label>
         </div>
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">Priority</label>
@@ -182,7 +217,7 @@ export default function ApplicationForm({
           name="notes"
           value={formData.notes}
           onChange={handleChange}
-          placeholder="Add any notes, requirements, professor contacts, etc."
+          placeholder="Add any notes, requirements, documents needed, etc."
           rows={4}
         />
       </div>

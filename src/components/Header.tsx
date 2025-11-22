@@ -55,6 +55,17 @@ export default function Header() {
             >
               Kanban
             </Link>
+            <Link
+              href="/resources"
+              className={cn(
+                'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                isActive('/resources')
+                  ? 'bg-[#2979FF]/10 text-[#2979FF]'
+                  : 'text-gray-600 hover:bg-gray-100'
+              )}
+            >
+              Resources
+            </Link>
           </nav>
         </div>
       </div>

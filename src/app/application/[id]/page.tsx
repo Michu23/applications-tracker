@@ -38,12 +38,15 @@ export default function ApplicationDetail() {
       const updated = updateApplication(id, {
         courseName: data.courseName,
         university: data.university,
-        location: data.location || undefined,
+        city: data.city || undefined,
         deadline: new Date(data.deadline).toISOString(),
         status: data.status,
+        semester: data.semester || undefined,
         applicationLink: data.applicationLink || undefined,
         appliedDate: data.appliedDate ? new Date(data.appliedDate).toISOString() : undefined,
-        tuitionFee: data.tuitionFee || undefined,
+        uniAssistRequired: data.uniAssistRequired,
+        languageRequirement: data.languageRequirement || undefined,
+        semesterContribution: data.semesterContribution || undefined,
         priority: data.priority,
         notes: data.notes || undefined,
       });
@@ -119,7 +122,7 @@ export default function ApplicationDetail() {
           <div className="p-6 border-b border-gray-200">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-center gap-3 mb-2 flex-wrap">
                   <h1 className="text-2xl font-bold text-gray-900">{application.courseName}</h1>
                   <span
                     className={cn(
@@ -129,15 +132,20 @@ export default function ApplicationDetail() {
                   >
                     {application.status}
                   </span>
+                  {application.semester && (
+                    <span className="text-sm px-2.5 py-1 bg-[#2979FF]/10 text-[#2979FF] rounded-full">
+                      {application.semester} 2026
+                    </span>
+                  )}
                 </div>
                 <p className="text-lg text-gray-600">{application.university}</p>
-                {application.location && (
+                {application.city && (
                   <p className="text-gray-500 flex items-center gap-1.5 mt-1">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    {application.location}
+                    {application.city}, Germany
                   </p>
                 )}
               </div>
@@ -163,7 +171,7 @@ export default function ApplicationDetail() {
             {/* Deadline and Priority */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Deadline</h3>
+                <h3 className="text-sm font-medium text-gray-500 mb-2">Application Deadline</h3>
                 <p
                   className={cn(
                     'text-xl font-semibold',
@@ -195,22 +203,29 @@ export default function ApplicationDetail() {
               </div>
             </div>
 
-            {/* Additional Details */}
-            {(application.appliedDate || application.tuitionFee) && (
-              <div>
-                <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
-                  Application Details
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {application.appliedDate && (
-                    <DetailItem label="Applied Date" value={formatDate(application.appliedDate)} />
-                  )}
-                  {application.tuitionFee && (
-                    <DetailItem label="Tuition Fee" value={application.tuitionFee} />
-                  )}
-                </div>
+            {/* Application Details */}
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
+                Application Details
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {application.uniAssistRequired !== undefined && (
+                  <DetailItem
+                    label="Uni-Assist Required"
+                    value={application.uniAssistRequired ? 'Yes' : 'No'}
+                  />
+                )}
+                {application.appliedDate && (
+                  <DetailItem label="Applied Date" value={formatDate(application.appliedDate)} />
+                )}
+                {application.languageRequirement && (
+                  <DetailItem label="Language Requirement" value={application.languageRequirement} />
+                )}
+                {application.semesterContribution && (
+                  <DetailItem label="Semester Contribution" value={application.semesterContribution} />
+                )}
               </div>
-            )}
+            </div>
 
             {/* Links */}
             {application.applicationLink && (
