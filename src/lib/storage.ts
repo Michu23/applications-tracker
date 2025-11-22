@@ -1,5 +1,10 @@
 import { Application, ApplicationStatus, Semester } from '@/types/application';
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
+
+// Get Supabase client (created lazily)
+function getSupabase() {
+  return createClient();
+}
 
 // Database row interface
 interface DbApplication {
@@ -65,7 +70,7 @@ function applicationToDb(app: Omit<Application, 'id' | 'createdAt' | 'updatedAt'
 // Applications Storage
 export async function getApplications(): Promise<Application[]> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('applications')
       .select('*')
       .order('deadline', { ascending: true });
@@ -75,7 +80,7 @@ export async function getApplications(): Promise<Application[]> {
       return [];
     }
 
-    return (data || []).map((row) => dbToApplication(row as DbApplication));
+    return (data || []).map((row: DbApplication) => dbToApplication(row));
   } catch (error) {
     console.error('Failed to read applications from Supabase:', error);
     return [];
@@ -84,7 +89,7 @@ export async function getApplications(): Promise<Application[]> {
 
 export async function getApplication(id: string): Promise<Application | null> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('applications')
       .select('*')
       .eq('id', id)
@@ -106,7 +111,7 @@ export async function createApplication(data: Omit<Application, 'id' | 'createdA
   try {
     const dbData = applicationToDb(data);
 
-    const { data: created, error } = await supabase
+    const { data: created, error } = await getSupabase()
       .from('applications')
       .insert(dbData)
       .select()
@@ -145,7 +150,7 @@ export async function updateApplication(
     if (updates.priority !== undefined) dbUpdates.priority = updates.priority;
     if (updates.notes !== undefined) dbUpdates.notes = updates.notes || null;
 
-    const { data: updated, error } = await supabase
+    const { data: updated, error } = await getSupabase()
       .from('applications')
       .update(dbUpdates)
       .eq('id', id)
@@ -166,7 +171,7 @@ export async function updateApplication(
 
 export async function deleteApplication(id: string): Promise<boolean> {
   try {
-    const { error } = await supabase
+    const { error } = await getSupabase()
       .from('applications')
       .delete()
       .eq('id', id);
@@ -276,7 +281,7 @@ export async function importApplications(
   try {
     // If replacing, delete all existing applications first
     if (replace) {
-      const { error: deleteError } = await supabase
+      const { error: deleteError } = await getSupabase()
         .from('applications')
         .delete()
         .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows
@@ -290,7 +295,7 @@ export async function importApplications(
     // Insert new applications
     const dbApplications = data.applications.map(app => applicationToDb(app));
 
-    const { error: insertError } = await supabase
+    const { error: insertError } = await getSupabase()
       .from('applications')
       .insert(dbApplications);
 
