@@ -14,22 +14,28 @@ export default function ImportExport({ onImportComplete }: ImportExportProps) {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
-  const handleExport = () => {
-    const data = exportApplications();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const data = await exportApplications();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
 
-    const today = new Date().toISOString().split('T')[0];
-    const filename = `applications-backup-${today}.json`;
+      const today = new Date().toISOString().split('T')[0];
+      const filename = `applications-backup-${today}.json`;
 
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const handleImportClick = () => {
@@ -58,7 +64,7 @@ export default function ImportExport({ onImportComplete }: ImportExportProps) {
         return;
       }
 
-      const result = importApplications(data as ExportData, false);
+      const result = await importApplications(data as ExportData, false);
 
       if (result.success) {
         setImportSuccess(`Successfully imported ${result.count} application${result.count !== 1 ? 's' : ''}.`);
@@ -83,11 +89,11 @@ export default function ImportExport({ onImportComplete }: ImportExportProps) {
   return (
     <>
       <div className="flex items-center gap-2">
-        <Button variant="secondary" size="sm" onClick={handleExport}>
+        <Button variant="secondary" size="sm" onClick={handleExport} disabled={isExporting}>
           <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
-          Export
+          {isExporting ? 'Exporting...' : 'Export'}
         </Button>
         <Button variant="secondary" size="sm" onClick={handleImportClick}>
           <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

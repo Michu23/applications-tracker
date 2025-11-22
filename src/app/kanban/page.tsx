@@ -14,8 +14,8 @@ export default function KanbanPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const loadData = useCallback(() => {
-    const apps = getApplications();
+  const loadData = useCallback(async () => {
+    const apps = await getApplications();
     setApplications(apps);
   }, []);
 
@@ -24,18 +24,18 @@ export default function KanbanPage() {
     loadData();
   }, [loadData]);
 
-  const handleStatusChange = (applicationId: string, newColumn: KanbanStatus) => {
+  const handleStatusChange = async (applicationId: string, newColumn: KanbanStatus) => {
     const newStatus = getStatusForKanbanColumn(newColumn);
-    const updated = updateApplication(applicationId, { status: newStatus });
+    const updated = await updateApplication(applicationId, { status: newStatus });
     if (updated) {
-      loadData();
+      await loadData();
     }
   };
 
-  const handleCreateApplication = (data: ApplicationFormData) => {
+  const handleCreateApplication = async (data: ApplicationFormData) => {
     setIsLoading(true);
     try {
-      const newApp = createApplication({
+      const newApp = await createApplication({
         courseName: data.courseName,
         university: data.university,
         city: data.city || undefined,
@@ -52,7 +52,7 @@ export default function KanbanPage() {
       });
 
       if (newApp) {
-        loadData();
+        await loadData();
         setIsCreateModalOpen(false);
       }
     } finally {

@@ -24,8 +24,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const loadData = useCallback(() => {
-    const apps = getApplications();
+  const loadData = useCallback(async () => {
+    const apps = await getApplications();
     const savedSettings = getSettings();
     setApplications(apps);
     setSettings(savedSettings);
@@ -57,10 +57,10 @@ export default function Home() {
     saveSettings(newSettings);
   };
 
-  const handleCreateApplication = (data: ApplicationFormData) => {
+  const handleCreateApplication = async (data: ApplicationFormData) => {
     setIsLoading(true);
     try {
-      const newApp = createApplication({
+      const newApp = await createApplication({
         courseName: data.courseName,
         university: data.university,
         city: data.city || undefined,
@@ -77,7 +77,7 @@ export default function Home() {
       });
 
       if (newApp) {
-        loadData();
+        await loadData();
         setIsCreateModalOpen(false);
       }
     } finally {

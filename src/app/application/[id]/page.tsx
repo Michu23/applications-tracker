@@ -22,8 +22,8 @@ export default function ApplicationDetail() {
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const loadApplication = useCallback(() => {
-    const app = getApplication(id);
+  const loadApplication = useCallback(async () => {
+    const app = await getApplication(id);
     setApplication(app);
   }, [id]);
 
@@ -32,10 +32,10 @@ export default function ApplicationDetail() {
     loadApplication();
   }, [loadApplication]);
 
-  const handleUpdate = (data: ApplicationFormData) => {
+  const handleUpdate = async (data: ApplicationFormData) => {
     setIsLoading(true);
     try {
-      const updated = updateApplication(id, {
+      const updated = await updateApplication(id, {
         courseName: data.courseName,
         university: data.university,
         city: data.city || undefined,
@@ -60,8 +60,9 @@ export default function ApplicationDetail() {
     }
   };
 
-  const handleDelete = () => {
-    if (deleteApplication(id)) {
+  const handleDelete = async () => {
+    const deleted = await deleteApplication(id);
+    if (deleted) {
       router.push('/');
     }
   };

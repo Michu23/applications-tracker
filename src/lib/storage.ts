@@ -1,118 +1,197 @@
-import { Application } from '@/types/application';
+import { Application, ApplicationStatus, Semester } from '@/types/application';
+import { supabase } from './supabase';
 
-const STORAGE_KEYS = {
-  applications: 'uniTracker:applications',
-  settings: 'uniTracker:settings',
-} as const;
-
-// Generate a unique ID
-export function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+// Database row interface
+interface DbApplication {
+  id: string;
+  course_name: string;
+  university: string;
+  city: string | null;
+  deadline: string;
+  status: string;
+  semester: string | null;
+  application_link: string | null;
+  applied_date: string | null;
+  uni_assist_required: boolean;
+  language_requirement: string | null;
+  semester_contribution: string | null;
+  priority: number;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
-// Check if we're in browser environment
-function isBrowser(): boolean {
-  return typeof window !== 'undefined';
+// Transform database row to Application type
+function dbToApplication(row: DbApplication): Application {
+  return {
+    id: row.id,
+    courseName: row.course_name,
+    university: row.university,
+    city: row.city || undefined,
+    deadline: row.deadline,
+    status: row.status as ApplicationStatus,
+    semester: (row.semester as Semester) || undefined,
+    applicationLink: row.application_link || undefined,
+    appliedDate: row.applied_date || undefined,
+    uniAssistRequired: row.uni_assist_required,
+    languageRequirement: row.language_requirement || undefined,
+    semesterContribution: row.semester_contribution || undefined,
+    priority: row.priority,
+    notes: row.notes || undefined,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+// Transform Application to database insert format
+function applicationToDb(app: Omit<Application, 'id' | 'createdAt' | 'updatedAt'>) {
+  return {
+    course_name: app.courseName,
+    university: app.university,
+    city: app.city || null,
+    deadline: app.deadline,
+    status: app.status,
+    semester: app.semester || null,
+    application_link: app.applicationLink || null,
+    applied_date: app.appliedDate || null,
+    uni_assist_required: app.uniAssistRequired || false,
+    language_requirement: app.languageRequirement || null,
+    semester_contribution: app.semesterContribution || null,
+    priority: app.priority,
+    notes: app.notes || null,
+  };
 }
 
 // Applications Storage
-export function getApplications(): Application[] {
-  if (!isBrowser()) return [];
-
+export async function getApplications(): Promise<Application[]> {
   try {
-    const data = localStorage.getItem(STORAGE_KEYS.applications);
-    if (!data) return [];
-    return JSON.parse(data) as Application[];
+    const { data, error } = await supabase
+      .from('applications')
+      .select('*')
+      .order('deadline', { ascending: true });
+
+    if (error) {
+      console.error('Failed to fetch applications:', error);
+      return [];
+    }
+
+    return (data || []).map((row) => dbToApplication(row as DbApplication));
   } catch (error) {
-    console.error('Failed to read applications from localStorage:', error);
+    console.error('Failed to read applications from Supabase:', error);
     return [];
   }
 }
 
-export function saveApplications(applications: Application[]): boolean {
-  if (!isBrowser()) return false;
-
+export async function getApplication(id: string): Promise<Application | null> {
   try {
-    localStorage.setItem(STORAGE_KEYS.applications, JSON.stringify(applications));
-    return true;
+    const { data, error } = await supabase
+      .from('applications')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.error('Failed to fetch application:', error);
+      return null;
+    }
+
+    return data ? dbToApplication(data as DbApplication) : null;
   } catch (error) {
-    console.error('Failed to save applications to localStorage:', error);
-    return false;
+    console.error('Failed to read application from Supabase:', error);
+    return null;
   }
 }
 
-export function getApplication(id: string): Application | null {
-  const applications = getApplications();
-  return applications.find(app => app.id === id) || null;
-}
-
-export function createApplication(data: Omit<Application, 'id' | 'createdAt' | 'updatedAt'>): Application | null {
+export async function createApplication(data: Omit<Application, 'id' | 'createdAt' | 'updatedAt'>): Promise<Application | null> {
   try {
-    const now = new Date().toISOString();
-    const application: Application = {
-      ...data,
-      id: generateId(),
-      createdAt: now,
-      updatedAt: now,
-    };
+    const dbData = applicationToDb(data);
 
-    const applications = getApplications();
-    applications.push(application);
+    const { data: created, error } = await supabase
+      .from('applications')
+      .insert(dbData)
+      .select()
+      .single();
 
-    if (saveApplications(applications)) {
-      return application;
+    if (error) {
+      console.error('Failed to create application:', error);
+      return null;
     }
-    return null;
+
+    return created ? dbToApplication(created as DbApplication) : null;
   } catch (error) {
     console.error('Failed to create application:', error);
     return null;
   }
 }
 
-export function updateApplication(id: string, updates: Partial<Omit<Application, 'id' | 'createdAt'>>): Application | null {
+export async function updateApplication(
+  id: string,
+  updates: Partial<Omit<Application, 'id' | 'createdAt'>>
+): Promise<Application | null> {
   try {
-    const applications = getApplications();
-    const index = applications.findIndex(app => app.id === id);
+    const dbUpdates: Record<string, unknown> = {};
 
-    if (index === -1) return null;
+    if (updates.courseName !== undefined) dbUpdates.course_name = updates.courseName;
+    if (updates.university !== undefined) dbUpdates.university = updates.university;
+    if (updates.city !== undefined) dbUpdates.city = updates.city || null;
+    if (updates.deadline !== undefined) dbUpdates.deadline = updates.deadline;
+    if (updates.status !== undefined) dbUpdates.status = updates.status;
+    if (updates.semester !== undefined) dbUpdates.semester = updates.semester || null;
+    if (updates.applicationLink !== undefined) dbUpdates.application_link = updates.applicationLink || null;
+    if (updates.appliedDate !== undefined) dbUpdates.applied_date = updates.appliedDate || null;
+    if (updates.uniAssistRequired !== undefined) dbUpdates.uni_assist_required = updates.uniAssistRequired;
+    if (updates.languageRequirement !== undefined) dbUpdates.language_requirement = updates.languageRequirement || null;
+    if (updates.semesterContribution !== undefined) dbUpdates.semester_contribution = updates.semesterContribution || null;
+    if (updates.priority !== undefined) dbUpdates.priority = updates.priority;
+    if (updates.notes !== undefined) dbUpdates.notes = updates.notes || null;
 
-    applications[index] = {
-      ...applications[index],
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    };
+    const { data: updated, error } = await supabase
+      .from('applications')
+      .update(dbUpdates)
+      .eq('id', id)
+      .select()
+      .single();
 
-    if (saveApplications(applications)) {
-      return applications[index];
+    if (error) {
+      console.error('Failed to update application:', error);
+      return null;
     }
-    return null;
+
+    return updated ? dbToApplication(updated as DbApplication) : null;
   } catch (error) {
     console.error('Failed to update application:', error);
     return null;
   }
 }
 
-export function deleteApplication(id: string): boolean {
+export async function deleteApplication(id: string): Promise<boolean> {
   try {
-    const applications = getApplications();
-    const filtered = applications.filter(app => app.id !== id);
+    const { error } = await supabase
+      .from('applications')
+      .delete()
+      .eq('id', id);
 
-    if (filtered.length === applications.length) return false;
+    if (error) {
+      console.error('Failed to delete application:', error);
+      return false;
+    }
 
-    return saveApplications(filtered);
+    return true;
   } catch (error) {
     console.error('Failed to delete application:', error);
     return false;
   }
 }
 
-// Settings Storage
+// Settings Storage (kept in localStorage as it's user preference)
 export interface Settings {
   viewMode: 'list' | 'kanban';
   sortBy: 'deadline' | 'status' | 'university' | 'priority';
   sortOrder: 'asc' | 'desc';
   filterStatus: string | null;
 }
+
+const SETTINGS_KEY = 'uniTracker:settings';
 
 const DEFAULT_SETTINGS: Settings = {
   viewMode: 'list',
@@ -121,11 +200,15 @@ const DEFAULT_SETTINGS: Settings = {
   filterStatus: null,
 };
 
+function isBrowser(): boolean {
+  return typeof window !== 'undefined';
+}
+
 export function getSettings(): Settings {
   if (!isBrowser()) return DEFAULT_SETTINGS;
 
   try {
-    const data = localStorage.getItem(STORAGE_KEYS.settings);
+    const data = localStorage.getItem(SETTINGS_KEY);
     if (!data) return DEFAULT_SETTINGS;
     return { ...DEFAULT_SETTINGS, ...JSON.parse(data) };
   } catch (error) {
@@ -140,7 +223,7 @@ export function saveSettings(settings: Partial<Settings>): boolean {
   try {
     const current = getSettings();
     const updated = { ...current, ...settings };
-    localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(updated));
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(updated));
     return true;
   } catch (error) {
     console.error('Failed to save settings to localStorage:', error);
@@ -155,8 +238,8 @@ export interface ExportData {
   applications: Application[];
 }
 
-export function exportApplications(): ExportData {
-  const applications = getApplications();
+export async function exportApplications(): Promise<ExportData> {
+  const applications = await getApplications();
   return {
     version: '1.0',
     exportedAt: new Date().toISOString(),
@@ -186,27 +269,37 @@ export function validateImportData(data: unknown): data is ExportData {
   return true;
 }
 
-export function importApplications(data: ExportData, replace: boolean = false): { success: boolean; count: number; error?: string } {
+export async function importApplications(
+  data: ExportData,
+  replace: boolean = false
+): Promise<{ success: boolean; count: number; error?: string }> {
   try {
-    const newApplications = data.applications.map(app => ({
-      ...app,
-      id: generateId(), // Generate new IDs to handle duplicates
-      createdAt: app.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }));
-
-    let applications: Application[];
+    // If replacing, delete all existing applications first
     if (replace) {
-      applications = newApplications;
-    } else {
-      const existing = getApplications();
-      applications = [...existing, ...newApplications];
+      const { error: deleteError } = await supabase
+        .from('applications')
+        .delete()
+        .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows
+
+      if (deleteError) {
+        console.error('Failed to delete existing applications:', deleteError);
+        return { success: false, count: 0, error: 'Failed to clear existing applications' };
+      }
     }
 
-    if (saveApplications(applications)) {
-      return { success: true, count: newApplications.length };
+    // Insert new applications
+    const dbApplications = data.applications.map(app => applicationToDb(app));
+
+    const { error: insertError } = await supabase
+      .from('applications')
+      .insert(dbApplications);
+
+    if (insertError) {
+      console.error('Failed to import applications:', insertError);
+      return { success: false, count: 0, error: 'Failed to import applications' };
     }
-    return { success: false, count: 0, error: 'Failed to save imported applications' };
+
+    return { success: true, count: data.applications.length };
   } catch (error) {
     console.error('Failed to import applications:', error);
     return { success: false, count: 0, error: 'Import failed due to an error' };
