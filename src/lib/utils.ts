@@ -29,15 +29,9 @@ export function getDeadlineColor(deadline: string): 'red' | 'orange' | 'default'
   return 'default';
 }
 
-export function isDeadlineThisMonth(deadline: string): boolean {
-  const deadlineDate = new Date(deadline);
-  const now = new Date();
-
-  return (
-    deadlineDate.getMonth() === now.getMonth() &&
-    deadlineDate.getFullYear() === now.getFullYear() &&
-    deadlineDate >= now
-  );
+export function isDeadlineIn3Days(deadline: string): boolean {
+  const daysRemaining = getDaysRemaining(deadline);
+  return daysRemaining >= 0 && daysRemaining <= 3;
 }
 
 // Sorting utilities
@@ -88,7 +82,7 @@ export function getApplicationStats(applications: Application[]) {
   const rejected = applications.filter(app => app.status === 'Rejected').length;
   const waitlist = applications.filter(app => app.status === 'Waitlist').length;
   const planning = applications.filter(app => app.status === 'Planning').length;
-  const upcomingDeadlines = applications.filter(app => isDeadlineThisMonth(app.deadline)).length;
+  const upcomingDeadlines = applications.filter(app => isDeadlineIn3Days(app.deadline)).length;
 
   return {
     total,

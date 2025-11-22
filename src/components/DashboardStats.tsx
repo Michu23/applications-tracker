@@ -34,7 +34,7 @@ export default function DashboardStats({ applications }: DashboardStatsProps) {
       textColor: 'text-blue-600',
     },
     {
-      label: 'Deadlines This Month',
+      label: 'Deadlines in 3 Days',
       value: stats.upcomingDeadlines,
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

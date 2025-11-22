@@ -29,11 +29,7 @@ export default function ApplicationForm({
     status: initialData?.status || 'Planning',
     applicationLink: initialData?.applicationLink || DEFAULT_APPLICATION_VALUES.applicationLink,
     appliedDate: initialData?.appliedDate ? initialData.appliedDate.split('T')[0] : DEFAULT_APPLICATION_VALUES.appliedDate,
-    applicationType: initialData?.applicationType || DEFAULT_APPLICATION_VALUES.applicationType,
     tuitionFee: initialData?.tuitionFee || DEFAULT_APPLICATION_VALUES.tuitionFee,
-    applicationFee: initialData?.applicationFee || DEFAULT_APPLICATION_VALUES.applicationFee,
-    scholarshipLink: initialData?.scholarshipLink || DEFAULT_APPLICATION_VALUES.scholarshipLink,
-    languageOfInstruction: initialData?.languageOfInstruction || DEFAULT_APPLICATION_VALUES.languageOfInstruction,
     priority: initialData?.priority || DEFAULT_APPLICATION_VALUES.priority,
     notes: initialData?.notes || DEFAULT_APPLICATION_VALUES.notes,
   });
@@ -145,12 +141,12 @@ export default function ApplicationForm({
             placeholder="e.g., Cambridge, MA"
           />
           <Input
-            id="applicationType"
-            name="applicationType"
-            label="Application Type"
-            value={formData.applicationType}
+            id="tuitionFee"
+            name="tuitionFee"
+            label="Tuition Fee"
+            value={formData.tuitionFee}
             onChange={handleChange}
-            placeholder="e.g., Graduate, Undergraduate"
+            placeholder="e.g., $50,000/year"
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -170,43 +166,6 @@ export default function ApplicationForm({
             label="Applied Date"
             value={formData.appliedDate}
             onChange={handleChange}
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            id="tuitionFee"
-            name="tuitionFee"
-            label="Tuition Fee"
-            value={formData.tuitionFee}
-            onChange={handleChange}
-            placeholder="e.g., $50,000/year"
-          />
-          <Input
-            id="applicationFee"
-            name="applicationFee"
-            label="Application Fee"
-            value={formData.applicationFee}
-            onChange={handleChange}
-            placeholder="e.g., $75"
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            id="scholarshipLink"
-            name="scholarshipLink"
-            type="url"
-            label="Scholarship Link"
-            value={formData.scholarshipLink}
-            onChange={handleChange}
-            placeholder="https://..."
-          />
-          <Input
-            id="languageOfInstruction"
-            name="languageOfInstruction"
-            label="Language of Instruction"
-            value={formData.languageOfInstruction}
-            onChange={handleChange}
-            placeholder="e.g., English"
           />
         </div>
         <div className="space-y-2">

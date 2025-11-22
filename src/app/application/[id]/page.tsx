@@ -43,11 +43,7 @@ export default function ApplicationDetail() {
         status: data.status,
         applicationLink: data.applicationLink || undefined,
         appliedDate: data.appliedDate ? new Date(data.appliedDate).toISOString() : undefined,
-        applicationType: data.applicationType || undefined,
         tuitionFee: data.tuitionFee || undefined,
-        applicationFee: data.applicationFee || undefined,
-        scholarshipLink: data.scholarshipLink || undefined,
-        languageOfInstruction: data.languageOfInstruction || undefined,
         priority: data.priority,
         notes: data.notes || undefined,
       });
@@ -200,62 +196,40 @@ export default function ApplicationDetail() {
             </div>
 
             {/* Additional Details */}
-            <div>
-              <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
-                Application Details
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {application.applicationType && (
-                  <DetailItem label="Application Type" value={application.applicationType} />
-                )}
-                {application.appliedDate && (
-                  <DetailItem label="Applied Date" value={formatDate(application.appliedDate)} />
-                )}
-                {application.tuitionFee && (
-                  <DetailItem label="Tuition Fee" value={application.tuitionFee} />
-                )}
-                {application.applicationFee && (
-                  <DetailItem label="Application Fee" value={application.applicationFee} />
-                )}
-                {application.languageOfInstruction && (
-                  <DetailItem label="Language of Instruction" value={application.languageOfInstruction} />
-                )}
+            {(application.appliedDate || application.tuitionFee) && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
+                  Application Details
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {application.appliedDate && (
+                    <DetailItem label="Applied Date" value={formatDate(application.appliedDate)} />
+                  )}
+                  {application.tuitionFee && (
+                    <DetailItem label="Tuition Fee" value={application.tuitionFee} />
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Links */}
-            {(application.applicationLink || application.scholarshipLink) && (
+            {application.applicationLink && (
               <div>
                 <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
                   Links
                 </h3>
                 <div className="flex flex-wrap gap-3">
-                  {application.applicationLink && (
-                    <a
-                      href={application.applicationLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-[#2979FF] hover:underline"
-                    >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                      Application Portal
-                    </a>
-                  )}
-                  {application.scholarshipLink && (
-                    <a
-                      href={application.scholarshipLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-[#2979FF] hover:underline"
-                    >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                      Scholarship Info
-                    </a>
-                  )}
+                  <a
+                    href={application.applicationLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-[#2979FF] hover:underline"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    Application Portal
+                  </a>
                 </div>
               </div>
             )}

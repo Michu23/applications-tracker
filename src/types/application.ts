@@ -21,11 +21,7 @@ export interface Application {
   status: ApplicationStatus;
   applicationLink?: string;
   appliedDate?: string; // ISO date string
-  applicationType?: string;
   tuitionFee?: string;
-  applicationFee?: string;
-  scholarshipLink?: string;
-  languageOfInstruction?: string;
   priority: number; // 1-5
   notes?: string;
   createdAt: string; // ISO date string
@@ -40,11 +36,7 @@ export interface ApplicationFormData {
   status: ApplicationStatus;
   applicationLink: string;
   appliedDate: string;
-  applicationType: string;
   tuitionFee: string;
-  applicationFee: string;
-  scholarshipLink: string;
-  languageOfInstruction: string;
   priority: number;
   notes: string;
 }
@@ -53,11 +45,7 @@ export const DEFAULT_APPLICATION_VALUES: Omit<ApplicationFormData, 'courseName' 
   location: '',
   applicationLink: '',
   appliedDate: '',
-  applicationType: '',
   tuitionFee: '',
-  applicationFee: '',
-  scholarshipLink: '',
-  languageOfInstruction: '',
   priority: 3,
   notes: '',
 };

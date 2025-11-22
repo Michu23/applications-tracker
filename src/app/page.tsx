@@ -68,11 +68,7 @@ export default function Home() {
         status: data.status,
         applicationLink: data.applicationLink || undefined,
         appliedDate: data.appliedDate ? new Date(data.appliedDate).toISOString() : undefined,
-        applicationType: data.applicationType || undefined,
         tuitionFee: data.tuitionFee || undefined,
-        applicationFee: data.applicationFee || undefined,
-        scholarshipLink: data.scholarshipLink || undefined,
-        languageOfInstruction: data.languageOfInstruction || undefined,
         priority: data.priority,
         notes: data.notes || undefined,
       });
