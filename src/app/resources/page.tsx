@@ -165,9 +165,9 @@ export default function ResourcesPage() {
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">German University Resources</h1>
+          <h1 className="text-2xl font-bold text-gray-900">My Resources</h1>
           <p className="text-gray-500 mt-2">
-            Essential links and resources for applying to Master&apos;s programs in Germany for Summer 2026
+            Essential links for my German Master&apos;s applications - Summer 2026
           </p>
         </div>
 
