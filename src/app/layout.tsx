@@ -3,8 +3,8 @@ import "./globals.css";
 import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "UniTracker - University Application Tracker",
-  description: "Track and manage your university applications with ease",
+  title: "Michi's UniTracker - Master's Application Tracker",
+  description: "Michi's personal tracker for German Master's program applications",
 };
 
 export default function RootLayout({

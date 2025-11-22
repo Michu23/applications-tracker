@@ -29,7 +29,7 @@ export default function Header() {
                 />
               </svg>
             </div>
-            <span className="font-bold text-xl text-gray-900">UniTracker</span>
+            <span className="font-bold text-xl text-gray-900">Michi&apos;s UniTracker</span>
           </Link>
 
           <nav className="flex items-center gap-1">

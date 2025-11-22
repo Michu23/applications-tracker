@@ -120,9 +120,9 @@ export default function Home() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <h1 className="text-2xl font-bold text-gray-900">My Dashboard</h1>
             <p className="text-gray-500 mt-1">
-              Track and manage your university applications
+              Track your German Master&apos;s applications
             </p>
           </div>
           <div className="flex items-center gap-3">
