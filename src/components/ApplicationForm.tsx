@@ -28,6 +28,7 @@ export default function ApplicationForm({
     deadline: initialData?.deadline ? initialData.deadline.split('T')[0] : '',
     status: initialData?.status || 'Planning',
     semester: initialData?.semester || DEFAULT_APPLICATION_VALUES.semester,
+    courseLink: initialData?.courseLink || DEFAULT_APPLICATION_VALUES.courseLink,
     applicationLink: initialData?.applicationLink || DEFAULT_APPLICATION_VALUES.applicationLink,
     appliedDate: initialData?.appliedDate ? initialData.appliedDate.split('T')[0] : DEFAULT_APPLICATION_VALUES.appliedDate,
     uniAssistRequired: initialData?.uniAssistRequired || DEFAULT_APPLICATION_VALUES.uniAssistRequired,
@@ -148,12 +149,21 @@ export default function ApplicationForm({
         </div>
       </div>
 
-      {/* German-specific Fields */}
+      {/* Links Section */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-          Application Details
+          Links
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            id="courseLink"
+            name="courseLink"
+            type="url"
+            label="Course Details Link"
+            value={formData.courseLink}
+            onChange={handleChange}
+            placeholder="Link to course information page"
+          />
           <Input
             id="applicationLink"
             name="applicationLink"
@@ -161,8 +171,17 @@ export default function ApplicationForm({
             label="Application Portal Link"
             value={formData.applicationLink}
             onChange={handleChange}
-            placeholder="https://..."
+            placeholder="Link to apply for this program"
           />
+        </div>
+      </div>
+
+      {/* Application Details */}
+      <div className="space-y-4">
+        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+          Application Details
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             id="appliedDate"
             name="appliedDate"
@@ -171,8 +190,6 @@ export default function ApplicationForm({
             value={formData.appliedDate}
             onChange={handleChange}
           />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             id="languageRequirement"
             name="languageRequirement"
@@ -181,6 +198,8 @@ export default function ApplicationForm({
             onChange={handleChange}
             placeholder="e.g., IELTS 6.5, B2 German"
           />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             id="semesterContribution"
             name="semesterContribution"

@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS applications (
   deadline TIMESTAMPTZ NOT NULL,
   status TEXT NOT NULL DEFAULT 'Planning',
   semester TEXT,
+  course_link TEXT,
   application_link TEXT,
   applied_date TIMESTAMPTZ,
   uni_assist_required BOOLEAN DEFAULT false,

@@ -67,6 +67,7 @@ export default function Home() {
         deadline: new Date(data.deadline).toISOString(),
         status: data.status,
         semester: data.semester || undefined,
+        courseLink: data.courseLink || undefined,
         applicationLink: data.applicationLink || undefined,
         appliedDate: data.appliedDate ? new Date(data.appliedDate).toISOString() : undefined,
         uniAssistRequired: data.uniAssistRequired,

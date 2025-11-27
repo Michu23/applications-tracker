@@ -15,6 +15,7 @@ interface DbApplication {
   deadline: string;
   status: string;
   semester: string | null;
+  course_link: string | null;
   application_link: string | null;
   applied_date: string | null;
   uni_assist_required: boolean;
@@ -36,6 +37,7 @@ function dbToApplication(row: DbApplication): Application {
     deadline: row.deadline,
     status: row.status as ApplicationStatus,
     semester: (row.semester as Semester) || undefined,
+    courseLink: row.course_link || undefined,
     applicationLink: row.application_link || undefined,
     appliedDate: row.applied_date || undefined,
     uniAssistRequired: row.uni_assist_required,
@@ -57,6 +59,7 @@ function applicationToDb(app: Omit<Application, 'id' | 'createdAt' | 'updatedAt'
     deadline: app.deadline,
     status: app.status,
     semester: app.semester || null,
+    course_link: app.courseLink || null,
     application_link: app.applicationLink || null,
     applied_date: app.appliedDate || null,
     uni_assist_required: app.uniAssistRequired || false,
@@ -142,6 +145,7 @@ export async function updateApplication(
     if (updates.deadline !== undefined) dbUpdates.deadline = updates.deadline;
     if (updates.status !== undefined) dbUpdates.status = updates.status;
     if (updates.semester !== undefined) dbUpdates.semester = updates.semester || null;
+    if (updates.courseLink !== undefined) dbUpdates.course_link = updates.courseLink || null;
     if (updates.applicationLink !== undefined) dbUpdates.application_link = updates.applicationLink || null;
     if (updates.appliedDate !== undefined) dbUpdates.applied_date = updates.appliedDate || null;
     if (updates.uniAssistRequired !== undefined) dbUpdates.uni_assist_required = updates.uniAssistRequired;

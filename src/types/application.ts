@@ -23,7 +23,8 @@ export interface Application {
   deadline: string; // ISO date string
   status: ApplicationStatus;
   semester?: Semester;
-  applicationLink?: string;
+  courseLink?: string; // Link to course details/information
+  applicationLink?: string; // Link to application portal
   appliedDate?: string; // ISO date string
   uniAssistRequired?: boolean;
   languageRequirement?: string;
@@ -41,6 +42,7 @@ export interface ApplicationFormData {
   deadline: string;
   status: ApplicationStatus;
   semester: Semester;
+  courseLink: string;
   applicationLink: string;
   appliedDate: string;
   uniAssistRequired: boolean;
@@ -53,6 +55,7 @@ export interface ApplicationFormData {
 export const DEFAULT_APPLICATION_VALUES: Omit<ApplicationFormData, 'courseName' | 'university' | 'deadline' | 'status'> = {
   city: '',
   semester: '',
+  courseLink: '',
   applicationLink: '',
   appliedDate: '',
   uniAssistRequired: false,
