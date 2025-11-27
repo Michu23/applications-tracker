@@ -1,5 +1,6 @@
 export type ApplicationStatus =
   | 'Planning'
+  | 'In Progress'
   | 'Applied'
   | 'Admitted'
   | 'Rejected'
@@ -63,6 +64,7 @@ export const DEFAULT_APPLICATION_VALUES: Omit<ApplicationFormData, 'courseName' 
 
 export const STATUS_OPTIONS: ApplicationStatus[] = [
   'Planning',
+  'In Progress',
   'Applied',
   'Admitted',
   'Rejected',
@@ -77,7 +79,7 @@ export const SEMESTER_OPTIONS: { value: Semester; label: string }[] = [
 
 export const KANBAN_COLUMNS: { id: KanbanStatus; title: string; statuses: ApplicationStatus[] }[] = [
   { id: 'Planning', title: 'Planning', statuses: ['Planning'] },
-  { id: 'In Progress', title: 'In Progress', statuses: [] },
+  { id: 'In Progress', title: 'In Progress', statuses: ['In Progress'] },
   { id: 'Applied', title: 'Applied', statuses: ['Applied'] },
   { id: 'Decision Pending', title: 'Decision Pending', statuses: ['Waitlist'] },
   { id: 'Done', title: 'Done', statuses: ['Admitted', 'Rejected'] },
@@ -88,6 +90,8 @@ export function getKanbanColumnForStatus(status: ApplicationStatus): KanbanStatu
   switch (status) {
     case 'Planning':
       return 'Planning';
+    case 'In Progress':
+      return 'In Progress';
     case 'Applied':
       return 'Applied';
     case 'Waitlist':
@@ -106,7 +110,7 @@ export function getStatusForKanbanColumn(column: KanbanStatus): ApplicationStatu
     case 'Planning':
       return 'Planning';
     case 'In Progress':
-      return 'Planning';
+      return 'In Progress';
     case 'Applied':
       return 'Applied';
     case 'Decision Pending':
